@@ -1,26 +1,90 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const createError = require('http-errors');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const flash = require('connect-flash');
+const session = require('express-session');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const expressLayouts = require('express-ejs-layouts');
+const csrf = require('csurf');
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// Calling routes
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-var app = express();
+// Adding CSRF Protection
+const csrfProtection = csrf();
+
+// Passport Config
+require('./lib/passport')(passport);
+
+// Calling MongoDB
+require('./models/database');
+
+// Creating express app
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'));
+
+// Logging
 app.use(logger('dev'));
-app.use(express.json());
+
+// Body parser for Forms
+app.use(bodyParser.json());
+
+// Express body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// Express session
+app.use(
+  session({
+    secret: 'secretSession',
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 14 /* expires in 14 days*/,
+      httpOnly: true,
+    }, // week
+  })
+);
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Connect flash
+app.use(flash());
+
+// Using CSRF protection
+app.use(csrfProtection);
+
+// Global variables
+app.use((req, res, next) => {
+  res.locals.user = req.user || null;
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
