@@ -2,8 +2,6 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 const Review = require('../models/review');
-const fs = require('fs');
-const path = require('path');
 const PDFDocument = require('pdfkit');
 const Stripe = require('stripe');
 
@@ -40,7 +38,8 @@ exports.searchProduct = async (req, res) => {
 
 exports.sendProduct = (req, res) => {
   res.render('product', {
-    pageTitle: req.product.title,
+    PAGE_PATH: 'index',
+    PAGE_TITLE: req.product.title,
     product: req.product,
     user: req.user,
   });
@@ -52,7 +51,12 @@ exports.getProducts = async (req, res) => {
     limit: req.query.limit || 4,
   };
   const posts = await Product.paginate({}, options);
-  res.render('index', { pageTitle: 'All Products', posts, user: req.user });
+  res.render('index', {
+    PAGE_PATH: 'index',
+    PAGE_TITLE: 'All Products',
+    posts,
+    user: req.user,
+  });
 };
 
 exports.toggleLike = async (req, res) => {
@@ -71,7 +75,7 @@ exports.toggleLike = async (req, res) => {
   res.redirect(`/${req.product.slug}`);
 };
 
-exports.toggleComment = async (req, res) => {
+exports.toggleReview = async (req, res) => {
   let review;
   let operator;
   if (req.url.includes('remove_review')) {
@@ -99,7 +103,8 @@ exports.getCart = async (req, res) => {
   const user = await req.user.populate('cart.items.productId');
   const products = user.cart.items;
   res.render('shop/cart', {
-    pageTitle: 'Your Cart',
+    PAGE_PATH: 'cart',
+    PAGE_TITLE: 'Your Cart',
     products: products,
   });
 };
@@ -125,7 +130,8 @@ exports.getCheckout = async (req, res) => {
     total += p.quantity * p.productId.price;
   });
   res.render('shop/checkout', {
-    pageTitle: 'Checkout',
+    PAGE_PATH: 'orders',
+    PAGE_TITLE: 'Checkout',
     products: products,
     totalSum: total,
   });
@@ -147,6 +153,7 @@ exports.postOrder = async (req, res) => {
     user: {
       email: req.user.email,
       userId: req.user,
+      userAddress: req.user.address,
     },
     products: products,
   });
@@ -165,7 +172,8 @@ exports.postOrder = async (req, res) => {
 exports.getOrders = async (req, res) => {
   const orders = await Order.find({ 'user.userId': req.user._id });
   res.render('shop/orders', {
-    pageTitle: 'Your Orders',
+    PAGE_PATH: 'orders',
+    PAGE_TITLE: 'Your Orders',
     orders: orders,
   });
 };

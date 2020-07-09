@@ -5,11 +5,10 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const { sendEmail } = require('./controlHelper');
+const PAGE_PATH = 'auth';
 
 exports.get_signup = (req, res) => {
-  res.render('signup', {
-    pageTitle: 'Create new account',
-  });
+  res.render('auth/signup', { PAGE_PATH, PAGE_TITLE: 'Create new account' });
 };
 
 exports.validateSignup = async (req, res, next) => {
@@ -62,8 +61,9 @@ exports.validateSignup = async (req, res, next) => {
   if (errors.length > 0) {
     const error = errors.map((error) => error.msg)[0];
     const { name, email, username, password, passwordConfirmation } = req.body;
-    return res.render('signup', {
-      pageTitle: 'Create new account',
+    return res.render('auth/signup', {
+      PAGE_PATH,
+      PAGE_TITLE: 'Create new account',
       error,
       name,
       username,
@@ -88,9 +88,7 @@ exports.signup = async (req, res) => {
 };
 
 exports.get_signin = (req, res) => {
-  res.render('signin', {
-    pageTitle: 'Sign in',
-  });
+  res.render('auth/signin', { PAGE_PATH, PAGE_TITLE: 'Sign in' });
 };
 
 exports.set_verified = async (req, res, next) => {
@@ -106,21 +104,24 @@ exports.set_verified = async (req, res, next) => {
 exports.signin = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
-      return res.render('signin', {
-        pageTitle: 'Sign in',
+      return res.render('auth/signin', {
+        PAGE_PATH,
+        PAGE_TITLE: 'Sign in',
         error: err.message,
       });
     }
     if (!user) {
-      return res.render('signin', {
-        pageTitle: 'Sign in',
+      return res.render('auth/signin', {
+        PAGE_PATH,
+        PAGE_TITLE: 'Sign in',
         error: info.message,
       });
     }
     req.logIn(user, (err) => {
       if (err) {
-        return res.render('signin', {
-          pageTitle: 'Sign in',
+        return res.render('auth/signin', {
+          PAGE_PATH,
+          PAGE_TITLE: 'Sign in',
           error: err.message,
         });
       }
@@ -138,8 +139,9 @@ exports.signout = (req, res) => {
 };
 
 exports.getAuthUser = (req, res) => {
-  res.render('profile', {
-    pageTitle: `${req.profile.username}`,
+  res.render('auth/profile', {
+    PAGE_PATH,
+    PAGE_TITLE: `${req.profile.username}`,
     profile: req.profile,
   });
 };
@@ -219,9 +221,7 @@ exports.getReset = (req, res) => {
     message = null;
   }
   req.flash('error_msg', message);
-  res.render('auth/reset', {
-    pageTitle: 'Reset Password',
-  });
+  res.render('auth/reset', { PAGE_PATH, PAGE_TITLE: 'Reset Password' });
 };
 
 exports.postReset = async (req, res) => {
@@ -261,7 +261,8 @@ exports.getNewPassword = async (req, res) => {
   }
   req.flash('error_msg', message);
   res.render('auth/new-password', {
-    pageTitle: 'New Password',
+    PAGE_PATH,
+    PAGE_TITLE: 'New Password',
     userId: user._id.toString(),
     passwordToken: token,
   });
