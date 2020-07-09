@@ -61,4 +61,14 @@ userSchema.methods.clearCart = function () {
   return this.save();
 };
 
+/* Kind of like a middleware function after creating our schema (since we have access to next) */
+/* Must be a function declaration (not an arrow function), because we want to use 'this' to reference our schema */
+const autoPopulate = function (next) {
+  this.populate('avatar', '_id contentType filename fileID size');
+  next();
+};
+
+/* We're going to need to populate the 'postedBy' field virtually every time we do a findOne / find query, so we'll just do it as a pre hook here upon creating the schema */
+userSchema.pre('findOne', autoPopulate).pre('find', autoPopulate);
+
 module.exports = mongoose.model('User', userSchema);
