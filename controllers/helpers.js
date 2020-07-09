@@ -1,5 +1,5 @@
 const { bucket } = require('../models/database');
-const File = require('../models/File');
+const File = require('../models/file');
 const Multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const async = require('async');
@@ -34,12 +34,12 @@ const storage = new GridFsStorage({
 const upload = Multer({
   storage: storage,
   limits: {
-    fileSize: 100 * 1024 * 1024, // no larger than 100mb, you can change as needed.
+    fileSize: 10 * 1024 * 1024, // no larger than 10mb, you can change as needed.
   },
   fileFilter: (req, file, next) => {
     if (
       file.mimetype.startsWith('image/') ||
-      file.mimetype.startsWith('video/')
+      file.mimetype.startsWith('application/')
     ) {
       next(null, true);
     } else {
@@ -168,15 +168,14 @@ const transport = nodemailer.createTransport({
 });
 
 const sendEmail = async (req, user) => {
-  let link = `${req.protocol}://${req.get('host')}/api/verify?id=${user.id}`;
+  let link = `${req.protocol}://${req.get('host')}/auth/verify?id=${user.id}`;
   let message = {
-    from: `${process.env.emailAddress} M-Bias Company`,
+    from: `${process.env.emailAddress} Express Shop`,
     to: `${user.email}`,
-    subject: 'Please verify your Email to login to M-Bias.',
-    html: `<h1>Verify your email</h1>
-    <a href="${link}" target="_blank" rel="noopener noreferrer">Click Here</a><br/>
-    <h3>Save your User credentials,<h3/>
-    <p>Username: ${user.username}, Password: ${user.password}<p/>`,
+    subject: 'Please verify your Email to login to Express Shop.',
+    html: `
+    <h1>Verify your email</h1>
+    <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">Click Here</a> to Verify.</p>`,
   };
   try {
     await transport.sendMail(message);
