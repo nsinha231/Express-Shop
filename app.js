@@ -17,6 +17,7 @@ require('dotenv').config();
 // Calling routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/admin');
 
 // Adding CSRF Protection
 const csrfProtection = csrf();
@@ -50,7 +51,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth', usersRouter);
+app.use('/admin', usersRouter);
 
 // Express session
 app.use(
