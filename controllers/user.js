@@ -243,25 +243,29 @@ exports.postReset = async (req, res) => {
   res.redirect('auth/signin');
 };
 
-exports.getNewPassword = async (req, res) => {
-  const token = req.params.token;
-  const user = await User.findOne({
-    resetToken: token,
-    resetTokenExpiration: { $gt: Date.now() },
-  });
-  let message = req.flash('error');
-  if (message.length > 0) {
-    message = message[0];
-  } else {
-    message = null;
+exports.getNewPassword = async (req, res, next) => {
+  try {
+    const token = req.params.token;
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiration: { $gt: Date.now() },
+    });
+    let message = req.flash('error');
+    if (message.length > 0) {
+      message = message[0];
+    } else {
+      message = null;
+    }
+    req.flash('error_msg', message);
+    res.render('auth/new-password', {
+      PAGE_PATH,
+      PAGE_TITLE: 'Create new Password',
+      userId: user._id.toString(),
+      passwordToken: token,
+    });
+  } catch (error) {
+    return next(error);
   }
-  req.flash('error_msg', message);
-  res.render('auth/new-password', {
-    PAGE_PATH,
-    PAGE_TITLE: 'Create new Password',
-    userId: user._id.toString(),
-    passwordToken: token,
-  });
 };
 
 exports.postNewPassword = async (req, res) => {

@@ -170,7 +170,7 @@ const transport = nodemailer.createTransport({
 const sendEmail = async (req, user, key) => {
   let link, message;
   if (key === 'signup') {
-    link = `${req.protocol}://${req.get('host')}/auth/verify?id=${user.id}`;
+    link = `${req.protocol}://${req.get('host')}/auth/verify/${user.id}`;
     message = {
       from: `${process.env.emailAddress} Express Shop`,
       to: user.email,

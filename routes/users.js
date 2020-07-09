@@ -34,7 +34,7 @@ router.get('/reset', userController.getReset);
 
 router.post('/reset', userController.postReset);
 
-router.get('/reset/:token', catchErrors(userController.getNewPassword));
+router.get('/reset/:token', userController.getNewPassword);
 
 router.post('/new-password', catchErrors(userController.postNewPassword));
 
