@@ -26,13 +26,13 @@ router.put(
 router.put(
   '/:slug/review',
   userController.checkAuth,
-  catchErrors(indexController.toggleComment)
+  catchErrors(indexController.toggleReview)
 );
 
 router.put(
   '/:slug/remove_review',
   userController.checkAuth,
-  catchErrors(indexController.toggleComment)
+  catchErrors(indexController.toggleReview)
 );
 
 router.put(
