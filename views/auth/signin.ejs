@@ -1,0 +1,51 @@
+<title>Sign in for M-Bias</title>
+<div class="text-center"><h1 class="text-dark">M-Bias</h1></div>
+<section class="container shadow-sm my-5 col-md-8 col-lg-6 col-sm-11">
+  <form action="/api/signin" class="py-4" method="POST">
+    <%- include('./partials/messages') %>
+    <div class="text-center"><h4 class="text-dark py-3">Sign-In</h4></div>
+    <!-- Here fill alert for errors from server -->
+    <div class="form-group">
+      <label for="email">Email address</label>
+      <input
+        aria-describedby="emailHelp"
+        type="email"
+        id="email"
+        name="email"
+        class="form-control"
+        placeholder="Enter Email"
+        value="<%= typeof email != 'undefined' ? email : '' %>"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        placeholder="Create Password"
+        value="<%= typeof password != 'undefined' ? password : '' %>"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Sign In</button>
+    <div class="text-center">
+      <a href="/api/signup">Sign up</a>
+    </div>
+  </form>
+</section>
+
+<div class="clear"></div>
+
+<hr />
+
+<!-- Footer -->
+<footer class="page-footer font-small text-dark pt-4">
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">
+    © 2020 Copyright:
+    <span> M-Bias</span>
+  </div>
+  <!-- Copyright -->
+</footer>
+<!-- Footer -->
