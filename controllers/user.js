@@ -244,7 +244,11 @@ exports.postReset = async (req, res) => {
           <p>You requested a password reset</p>
           <p>Click this <a href="${link}"  target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
   });
-  res.redirect('/');
+  req.flash(
+    'success_msg',
+    `Link is sent to ${req.body.email} to reset password`
+  );
+  res.redirect('auth/signin');
 };
 
 exports.getNewPassword = async (req, res) => {
@@ -262,13 +266,39 @@ exports.getNewPassword = async (req, res) => {
   req.flash('error_msg', message);
   res.render('auth/new-password', {
     PAGE_PATH,
-    PAGE_TITLE: 'New Password',
+    PAGE_TITLE: 'Create new Password',
     userId: user._id.toString(),
     passwordToken: token,
   });
 };
 
 exports.postNewPassword = async (req, res) => {
+  await body('password')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 chars long')
+    .matches(/\d/)
+    .withMessage('Password must contain a number')
+    .run(req);
+  await body('passwordConfirmation')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Password confirmation does not match password');
+      }
+      return true;
+    })
+    .run(req);
+  const errors = validationResult(req).array();
+  if (errors.length > 0) {
+    const error = errors.map((error) => error.msg)[0];
+    const { password, passwordConfirmation } = req.body;
+    return res.render('auth/signup', {
+      PAGE_PATH,
+      PAGE_TITLE: 'Create new Password',
+      error,
+      password,
+      passwordConfirmation,
+    });
+  }
   const newPassword = req.body.password;
   const userId = req.body.userId;
   const passwordToken = req.body.passwordToken;
