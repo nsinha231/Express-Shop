@@ -1,0 +1,75 @@
+<div class="text-center"><%- include('../includes/messages') %></div>
+<div class="row justify-content-center mr-0 ml-2">
+  <% for( let i = 0; i < products.docs.length; i++ ) { const product =
+  products.docs[i] %>
+  <div
+    class="card text-white bg-dark m-3 p-0 shadow-lg col-sm-10 col-md-5 col-lg-4"
+  >
+    <div class="card-body">
+      <p class="card-title">
+        <%= product.meta_title %>
+        <span class="text-info"> PRODUCT CODE: <%= product.productCode %></span>
+      </p>
+      <h6 class="card-subtitle text-muted"><%= product.meta_description %></h6>
+      <h6 class="card-subtitle text-muted mt-2">
+        <% product.tags.forEach(tag => { %>
+        <span class="text-info"><%= tag %></span>
+        <% });%>
+      </h6>
+    </div>
+    <div class="card-body py-0">
+      <a href="/<%= product.slug %>"
+        ><img
+          class="img-fluid col p-0"
+          src="/files/<%= product.thumbnail.filename %>"
+          alt="<%= product.thumbnail.filename %>"
+      /></a>
+    </div>
+    <div class="card-body">
+      <img
+        src="<%= product.seller.avatar.source %>"
+        class="d-inline-block mr-2 rounded-circle"
+        style="width: 40px;"
+        alt="<%= product.seller.avatar.filename %>"
+      />
+      <a href="/auth/<%=product.seller.username%>" class="card-link">
+        <span class="text-white"><%= product.seller.username %></span></a
+      >
+    </div>
+    <div class="card-footer">
+      <% if(user){ %> <%- include('../includes/add-to-cart') %> <% } else{ %>
+      <a class="btn btn-block btn-outline-primary" href="/auth/signin"
+        >Sign in to order</a
+      >
+      <% } %>
+    </div>
+  </div>
+
+  <% } %>
+</div>
+
+<div class="row justify-content-center mr-0">
+  <ul class="pagination">
+    <li class="page-item <% if(products.page <= 1) { %> disabled <% } %>">
+      <a
+        class="page-link"
+        href="?page=<%= products.page <= 1 ? 1 : products.page - 1 %>"
+        >&laquo;</a
+      >
+    </li>
+    <% for (let i = 1 ; i <= products.totalPages; i++) {%>
+    <li class="page-item<% if(products.page == i) { %> active <% } %>">
+      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+    </li>
+    <% }%>
+    <li
+      class="page-item<% if(products.page == products.totalPages) { %> disabled <% } %>"
+    >
+      <a
+        class="page-link"
+        href="?page=<%= products.page > products.totalPages - 1 ? products.totalPages : 1 + products.page %>"
+        >&raquo;</a
+      >
+    </li>
+  </ul>
+</div>
