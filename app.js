@@ -17,7 +17,7 @@ require('dotenv').config();
 // Calling routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const usersRouter = require('./routes/admin');
+const adminRouter = require('./routes/admin');
 
 // Adding CSRF Protection
 const csrfProtection = csrf();
@@ -36,6 +36,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 
+// Gets Status of Express app
+app.use(require('express-status-monitor')());
+
 // override with POST having ?_method=DELETE
 app.use(methodOverride('_method'));
 
@@ -52,7 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/auth', usersRouter);
-app.use('/admin', usersRouter);
+app.use('/admin', adminRouter);
 
 // Express session
 app.use(
