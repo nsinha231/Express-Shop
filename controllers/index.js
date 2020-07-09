@@ -37,7 +37,7 @@ exports.searchProduct = async (req, res) => {
 };
 
 exports.sendProduct = (req, res) => {
-  res.render('product', {
+  res.render('shop/product', {
     PAGE_PATH: 'index',
     PAGE_TITLE: req.product.title,
     product: req.product,
@@ -51,11 +51,10 @@ exports.getProducts = async (req, res) => {
     limit: req.query.limit || 4,
   };
   const posts = await Product.paginate({}, options);
-  res.render('index', {
+  res.render('shop/index', {
     PAGE_PATH: 'index',
     PAGE_TITLE: 'All Products',
     posts,
-    user: req.user,
   });
 };
 

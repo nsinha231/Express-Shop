@@ -8,17 +8,34 @@ function URI() {
   return (random = shortId({ length: 12 }));
 }
 
-const productSchema = new Schema({
-  title: { type: String, required: true },
-  productCode: { type: String, default: URI },
-  price: { type: Number, required: true },
-  description: { type: String, required: true },
-  body: { type: String, required: true },
-  photos: [{ type: Schema.Types.ObjectId, ref: 'File', required: true }],
-  thumbnail: { type: Schema.Types.ObjectId, ref: 'File', required: true },
-  seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  likes: [{ type: Schema.ObjectId, ref: 'User' }],
-  reviews: [{ type: Schema.ObjectId, ref: 'Review' }],
+const productSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    productCode: { type: String, default: URI },
+    price: { type: Number, required: true },
+    description: { type: String, required: true },
+    body: { type: String, required: true },
+    photos: [{ type: Schema.Types.ObjectId, ref: 'File', required: true }],
+    thumbnail: { type: Schema.Types.ObjectId, ref: 'File', required: true },
+    seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    likes: [{ type: Schema.ObjectId, ref: 'User' }],
+    reviews: [{ type: Schema.ObjectId, ref: 'Review' }],
+  },
+  {
+    toJSON: { virtuals: true },
+  }
+);
+
+// Virtual for this metaTitle.
+productSchema.virtual('meta_title').get(function () {
+  return this.title.length > 50 ? this.title.substr(0, 50) + '...' : this.title;
+});
+
+// Virtual for this metaDescription.
+productSchema.virtual('meta_description').get(function () {
+  return this.description.length > 70
+    ? this.description.substr(0, 70) + '...'
+    : this.description;
 });
 
 /* Kind of like a middleware function after creating our schema (since we have access to next) */
@@ -34,7 +51,7 @@ const autoPopulate = function (next) {
 productSchema.pre('findOne', autoPopulate).pre('find', autoPopulate);
 
 /* The URLSlug plugin creates a slug that is human-readable unique identifier that can be used in a URL instead of an ID or hash*/
-productSchema.plugin(URLSlugs('title code'));
+productSchema.plugin(URLSlugs('title productCode'));
 
 /* The mongoosePaginate plugin adds paginate method to the Model for Pagination*/
 productSchema.plugin(mongoosePaginate);

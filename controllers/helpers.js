@@ -131,7 +131,7 @@ const deleteFileReference = async (file) => {
   await async.parallel([
     (callback) => {
       File.findOneAndDelete({
-        key: file.key,
+        fileID: file.fileID,
       }).exec(callback);
     },
     async () => {
@@ -159,6 +159,26 @@ const deleteAllFiles = async (req, res, next) => {
   return next();
 };
 
+const sendFiles = async (req, res, next) => {
+  try {
+    const files = await bucket
+      .find({ filename: req.params.filename })
+      .toArray();
+    if (!files[0] || files.length === 0) {
+      return res
+        .status(200)
+        .json({ success: false, message: 'No files available' });
+    }
+    if (files[0].contentType.startsWith('image')) {
+      bucket.openDownloadStreamByName(req.params.filename).pipe(res);
+    } else {
+      res.status(404).json({ err: 'Not a image' });
+    }
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const transport = nodemailer.createTransport({
   service: 'hotmail',
   auth: {
@@ -177,7 +197,7 @@ const sendEmail = async (req, user, key) => {
       subject: 'Please verify your Email to login to Express Shop.',
       html: `
           <h1>Verify your email</h1>
-          <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">Click Here</a> to Verify.</p>`,
+          <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">link</a> to Verify.</p>`,
     };
   } else {
     link = `${req.protocol}://${req.get('host')}/auth/reset/${token}`;
@@ -187,7 +207,7 @@ const sendEmail = async (req, user, key) => {
       subject: 'Password reset',
       html: `
           <p>You requested a password reset</p>
-          <p>Click this <a href="${link}"  target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
+          <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
     };
   }
   try {
@@ -203,5 +223,6 @@ module.exports = {
   saveFile,
   checkAndChangeProfile,
   deleteAllFiles,
+  sendFiles,
   sendEmail,
 };

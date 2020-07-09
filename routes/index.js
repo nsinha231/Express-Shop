@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const indexController = require('../controllers/index');
 const userController = require('../controllers/user');
-const { catchErrors } = require('../controllers/helpers');
+const { catchErrors, sendFiles } = require('../controllers/helpers');
 
 /**
  * POST ROUTES: /
@@ -92,5 +92,7 @@ router.get(
   userController.checkAuth,
   catchErrors(indexController.getInvoice)
 );
+
+router.get('/files/:filename', sendFiles);
 
 module.exports = router;
