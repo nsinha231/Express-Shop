@@ -167,16 +167,29 @@ const transport = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async (req, user) => {
-  let link = `${req.protocol}://${req.get('host')}/auth/verify?id=${user.id}`;
-  let message = {
-    from: `${process.env.emailAddress} Express Shop`,
-    to: `${user.email}`,
-    subject: 'Please verify your Email to login to Express Shop.',
-    html: `
-    <h1>Verify your email</h1>
-    <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">Click Here</a> to Verify.</p>`,
-  };
+const sendEmail = async (req, user, key) => {
+  let link, message;
+  if (key === 'signup') {
+    link = `${req.protocol}://${req.get('host')}/auth/verify?id=${user.id}`;
+    message = {
+      from: `${process.env.emailAddress} Express Shop`,
+      to: user.email,
+      subject: 'Please verify your Email to login to Express Shop.',
+      html: `
+          <h1>Verify your email</h1>
+          <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">Click Here</a> to Verify.</p>`,
+    };
+  } else {
+    link = `${req.protocol}://${req.get('host')}/auth/reset/${token}`;
+    message = {
+      from: `${process.env.emailAddress} Express Shop`,
+      to: req.body.email,
+      subject: 'Password reset',
+      html: `
+          <p>You requested a password reset</p>
+          <p>Click this <a href="${link}"  target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
+    };
+  }
   try {
     await transport.sendMail(message);
   } catch (error) {

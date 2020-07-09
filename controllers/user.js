@@ -4,7 +4,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
-const { sendEmail } = require('./controlHelper');
+const { sendEmail } = require('./helpers');
 const PAGE_PATH = 'auth';
 
 exports.get_signup = (req, res) => {
@@ -78,7 +78,7 @@ exports.validateSignup = async (req, res, next) => {
 exports.signup = async (req, res) => {
   const { name, email, password, username } = req.body;
   const user = await new User({ name, email, username, password });
-  await sendEmail(req, user);
+  await sendEmail(req, user, 'signup');
   let salt = await bcrypt.genSalt(10);
   let hash = await bcrypt.hash(user.password, salt);
   user.password = hash;
@@ -235,15 +235,7 @@ exports.postReset = async (req, res) => {
   user.resetToken = token;
   user.resetTokenExpiration = Date.now() + 3600000;
   await user.save();
-  let link = `${req.protocol}://${req.get('host')}/auth/reset/${token}`;
-  transporter.sendMail({
-    to: req.body.email,
-    from: `${process.env.emailAddress} Express Shop`,
-    subject: 'Password reset',
-    html: `
-          <p>You requested a password reset</p>
-          <p>Click this <a href="${link}"  target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
-  });
+  await sendEmail(req, user, 'reset');
   req.flash(
     'success_msg',
     `Link is sent to ${req.body.email} to reset password`
