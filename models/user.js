@@ -7,6 +7,7 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   avatar: { type: Schema.Types.ObjectId, ref: 'File', required: false },
   verified: { type: Boolean, required: true, default: false },
+  seller: { type: Boolean, required: true, default: false },
   address: { type: String, required: false },
   username: { type: String, lowercase: true },
   resetToken: String,
