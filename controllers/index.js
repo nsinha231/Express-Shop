@@ -112,13 +112,13 @@ exports.postCart = async (req, res) => {
   const prodId = req.body.productId;
   const product = await Product.findById(prodId);
   req.user.addToCart(product);
-  res.redirect('/cart');
+  res.redirect('shop/cart');
 };
 
 exports.postCartDeleteProduct = async (req, res) => {
   const prodId = req.body.productId;
   await req.user.removeFromCart(prodId);
-  res.redirect('/cart');
+  res.redirect('shop/cart');
 };
 
 exports.getCheckout = async (req, res) => {
@@ -162,7 +162,11 @@ exports.postOrder = async (req, res) => {
     currency: 'inr',
     description: 'Demo Order',
     source: token,
-    metadata: { order_id: result._id.toString() },
+    metadata: {
+      order_id: result._id.toString(),
+      address: `${result.userAddress.flat}, ${result.userAddress.street},
+      ${result.userAddress.pincode} ${result.userAddress.state}`,
+    },
   });
   req.user.clearCart();
   res.redirect('/orders');
@@ -186,13 +190,10 @@ exports.getInvoice = async (req, res, next) => {
   if (order.user.userId.toString() !== req.user._id.toString()) {
     return next(new Error('Unauthorized'));
   }
-  const invoiceName = 'invoice-' + orderId + '.pdf';
+  const invoiceName = `invoice-${orderId}.pdf`;
   const pdfDoc = new PDFDocument();
   res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader(
-    'Content-Disposition',
-    'attachment; filename="' + invoiceName + '"'
-  );
+  res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"`);
   pdfDoc.pipe(res);
   pdfDoc.fontSize(26).text('Invoice', {
     underline: true,
@@ -204,15 +205,17 @@ exports.getInvoice = async (req, res, next) => {
     pdfDoc
       .fontSize(14)
       .text(
-        prod.product.title +
-          ' - ' +
-          prod.quantity +
-          ' x ' +
-          '₹' +
-          prod.product.price
+        `${prod.product.title} -  ${prod.quantity} x ₹ ${prod.product.price}`
       );
   });
   pdfDoc.text('---');
-  pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+  pdfDoc.fontSize(20).text(`Total Price: ₹ ${totalPrice}`);
+  pdfDoc.fontSize(20).text(`Address`);
+  pdfDoc.text('---');
+  pdfDoc.fontSize(20).text(
+    `${userAddress.flat}, ${userAddress.street},
+      ${userAddress.pincode} ${userAddress.state},`
+  );
+  pdfDoc.text('-----------------------');
   pdfDoc.end();
 };

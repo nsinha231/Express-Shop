@@ -8,8 +8,9 @@ const userSchema = new Schema({
   avatar: { type: Schema.Types.ObjectId, ref: 'File', required: false },
   verified: { type: Boolean, required: true, default: false },
   seller: { type: Boolean, required: true, default: false },
-  address: { type: String, required: false },
-  username: { type: String, lowercase: true },
+  address: { flat: String, street: String, pincode: String, state: String },
+  username: { type: String, required: true, unique: true },
+  saved: [{ type: Schema.ObjectId, ref: 'Product', required: false }],
   resetToken: String,
   resetTokenExpiration: Date,
   cart: {
