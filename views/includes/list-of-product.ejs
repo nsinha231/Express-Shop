@@ -11,19 +11,15 @@
         <h5><%= product.title %></h5>
         <p><%= product.meta_description %></p>
         <h4><%= product.price %> ₹</h4>
+        <h4>
+          &times; <%= typeof product.quantity != 'undefined' ? product.quantity
+          : '' %>
+        </h4>
       </div>
     </div>
     <a href="/auth/<%= product.author.username%>" class="w-100">
-      <img
-        src="/files/<%= product.author.avatar.filename %>"
-        class="d-inline-block mr-2 rounded-circle"
-        style="width: 40px;"
-        alt="<%= product.author.avatar.filename %>"
-      />
+      <%- include('./avatar', {user: product.author}) %>
       <p class="mb-0 d-inline-block">By <%= product.author.username %></p>
     </a>
-    <small class="text-muted"
-      ><%= moment(product.publishedDate).fromNow()%></small
-    >
   </div></a
 >
