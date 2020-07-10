@@ -9,6 +9,45 @@ const { catchErrors, sendFiles } = require('../controllers/helpers');
  */
 router.get('/', catchErrors(indexController.getProducts));
 
+router.param('username', userController.getUserByUsername);
+
+router
+  .route('/cart/:username')
+  .get(userController.checkAuth, catchErrors(indexController.getCart))
+  .post(userController.checkAuth, catchErrors(indexController.postCart));
+
+router.post(
+  '/cart-delete-item',
+  userController.checkAuth,
+  catchErrors(indexController.postCartDeleteProduct)
+);
+
+router.get(
+  '/checkout',
+  userController.checkAuth,
+  catchErrors(indexController.getCheckout)
+);
+
+router.get(
+  '/create-order',
+  userController.checkAuth,
+  catchErrors(indexController.postOrder)
+);
+
+router.get(
+  '/orders',
+  userController.checkAuth,
+  catchErrors(indexController.getOrders)
+);
+
+router.get(
+  '/orders/:orderId',
+  userController.checkAuth,
+  catchErrors(indexController.getInvoice)
+);
+
+router.get('/files/:filename', sendFiles);
+
 router.param('slug', indexController.getProductBySlug);
 
 router.put(
@@ -57,44 +96,5 @@ router.post(
 router
   .route('/:slug')
   .get(userController.checkAuth, indexController.sendProduct);
-
-router.param('username', userController.getUserByUsername);
-
-router
-  .route('/cart/:username')
-  .get(userController.checkAuth, catchErrors(indexController.getCart))
-  .post(userController.checkAuth, catchErrors(indexController.postCart));
-
-router.post(
-  '/cart-delete-item',
-  userController.checkAuth,
-  catchErrors(indexController.postCartDeleteProduct)
-);
-
-router.get(
-  '/checkout',
-  userController.checkAuth,
-  catchErrors(indexController.getCheckout)
-);
-
-router.get(
-  '/create-order',
-  userController.checkAuth,
-  catchErrors(indexController.postOrder)
-);
-
-router.get(
-  '/orders',
-  userController.checkAuth,
-  catchErrors(indexController.getOrders)
-);
-
-router.get(
-  '/orders/:orderId',
-  userController.checkAuth,
-  catchErrors(indexController.getInvoice)
-);
-
-router.get('/files/:filename', sendFiles);
 
 module.exports = router;
