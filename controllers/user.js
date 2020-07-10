@@ -12,17 +12,10 @@ exports.get_signup = (req, res) => {
 };
 
 exports.validateSignup = async (req, res, next) => {
-  await body('name')
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage(`Name field can't be empty`)
-    .run(req);
   await body('username')
     .trim()
     .isLength({ min: 6, max: 16 })
     .withMessage('Username has to be longer than 6.')
-    .isAlphanumeric()
-    .withMessage('Username has non-alphanumeric characters.')
     .custom(async (value) => {
       const user = await User.findOne({ username: value });
       if (user) {
@@ -158,7 +151,7 @@ exports.getUserByUsername = async (req, res, next, username) => {
   try {
     req.profile = await User.findOne({ username: username }).populate({
       path: 'saved',
-      select: '-photos -body',
+      select: '-photos -body -reviews -likes',
     });
     req.profile.liked = await Product.find({
       likes: { $in: [req.profile._id] },
@@ -188,12 +181,7 @@ exports.toggleSavedProducts = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  req.body.updatedAt = new Date().toISOString();
-  await User.findOneAndUpdate(
-    { _id: req.user._id },
-    { $set: req.body },
-    { new: true, runValidators: true }
-  );
+  await User.findOneAndUpdate({ _id: req.user._id }, { $set: req.body });
   req.flash('success_msg', 'Your Account is updated');
   res.redirect(`/auth/${req.user.username}`);
 };
@@ -309,5 +297,5 @@ exports.postNewPassword = async (req, res) => {
   user.resetToken = undefined;
   user.resetTokenExpiration = undefined;
   await user.save();
-  res.redirect('/auth/login');
+  res.redirect('/auth/signin');
 };

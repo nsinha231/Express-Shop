@@ -17,7 +17,7 @@ exports.adminpanel = async (req, res) => {
     },
   });
   results.create = 'Add Product';
-  res.render('admin-panel', {
+  res.render('admin/admin-panel', {
     PAGE_PATH,
     PAGE_TITLE: 'Admin Panel',
     results,
@@ -25,7 +25,7 @@ exports.adminpanel = async (req, res) => {
 };
 
 exports.createProduct = (req, res) => {
-  res.render('product-form', { PAGE_PATH, PAGE_TITLE: 'New Product' });
+  res.render('admin/product-form', { PAGE_PATH, PAGE_TITLE: 'New Product' });
 };
 
 exports.sendProduct = async (req, res) => {
@@ -42,7 +42,7 @@ exports.sendProduct = async (req, res) => {
 };
 
 exports.sendProductForm = (req, res) => {
-  res.render('product-form', {
+  res.render('admin/product-form', {
     PAGE_PATH,
     PAGE_TITLE: `Update Product: ${req.product.title}`,
     product: req.product,
@@ -51,7 +51,7 @@ exports.sendProductForm = (req, res) => {
 
 exports.getUsers = async (req, res) => {
   const users = await User.find();
-  res.render('lists', {
+  res.render('admin/lists', {
     PAGE_PATH,
     PAGE_TITLE: 'List of users',
     users,
@@ -60,7 +60,7 @@ exports.getUsers = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   const products = await Product.find();
-  res.render('lists', {
+  res.render('admin/lists', {
     PAGE_PATH,
     PAGE_TITLE: 'List of products',
     products,
@@ -69,7 +69,7 @@ exports.getProducts = async (req, res) => {
 
 exports.getFiles = async (req, res) => {
   const files = await File.find();
-  res.render('lists', { PAGE_PATH, PAGE_TITLE: 'List of files', files });
+  res.render('admin/lists', { PAGE_PATH, PAGE_TITLE: 'List of files', files });
 };
 
 exports.updateProduct = async (req, res) => {
