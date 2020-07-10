@@ -1,0 +1,35 @@
+<%- include('../includes/navbar') %>
+<div class="text-center">
+  <%- include('../includes/messages') %>
+</div>
+<div class="container card bg-light shadow my-4">
+  <div class="row justify-content-center">
+    <div class="list-group">
+      <% if (orders.length <= 0) { %>
+      <h1 class="text-center">Nothing there!</h1>
+      <% } else { %> <% orders.forEach(order => { %>
+      <div class="list-group-item list-group-item-action flex-column">
+        <div class="w-100 mb-2">
+          <h1>
+            Order - # <%= order._id %> -
+            <a href="/orders/<%= order._id %>">Invoice</a>
+          </h1>
+          <br />
+          <% order.products.forEach(item => { %>
+          <div class="mt-2 text-capitalize d-inline-block">
+            <h5><%= product.title %></h5>
+            <p><%= product.meta_description %></p>
+            <h4><%= product.price %> ₹</h4>
+            <h4>Quantity - (<%= item.quantity %>)</h4>
+          </div>
+          <br />
+          <% }); %>
+        </div>
+        <% }); %>
+      </div>
+      <hr />
+      <% } %>
+    </div>
+  </div>
+</div>
+<%-include('../includes/footer') %>
