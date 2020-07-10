@@ -1,25 +1,22 @@
-<a href="/<%= product.slug%>"
-  ><div class="list-group-item list-group-item-action flex-column">
-    <div class="w-100 mb-2">
-      <img
-        src="/files/<%= product.thumbnail.filename %>"
-        class="d-inline-block mr-2"
-        style="width: 200px;"
-        alt="<%= product.thumbnail.filename %>"
-      />
-      <div class="mt-2 text-capitalize d-inline-block">
-        <h5><%= product.title %></h5>
-        <p><%= product.meta_description %></p>
-        <h4><%= product.price %> ₹</h4>
-        <h4>
-          &times; <%= typeof product.quantity != 'undefined' ? product.quantity
-          : '' %>
-        </h4>
-      </div>
-    </div>
-    <a href="/auth/<%= product.author.username%>" class="w-100">
-      <%- include('./avatar', {user: product.author}) %>
-      <p class="mb-0 d-inline-block">By <%= product.author.username %></p>
+<hr />
+<div class="row justify-content-center bg-light pt-3">
+  <div class="m-0 col-sm-5 col-md-4 col-lg-3 text-center">
+    <img
+      src="/files/<%= product.thumbnail.filename %>"
+      style="width: 20rem;"
+      class="img-fluid mt-3"
+      alt="<%= product.thumbnail.filename %>"
+    />
+  </div>
+  <div class="m-0 col-sm-10 col-md-8 col-lg-8 mt-3">
+    <a href="/<%= product.slug%>"> <h3><%= product.title %></h3></a>
+    <p><%= product.meta_description %></p>
+    <h4><%= product.price %> ₹</h4>
+    <h4>
+      <%= typeof product.quantity != 'undefined' ? product.quantity : '' %>
+    </h4>
+    <a href="/auth/<%= product.seller.username%>" class="w-100">
+      <p class="mb-0 d-inline-block">By <%= product.seller.username %></p>
     </a>
-  </div></a
->
+  </div>
+</div>

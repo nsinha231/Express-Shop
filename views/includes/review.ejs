@@ -1,19 +1,19 @@
 <div
   class="list-group-item list-group-item-action flex-column align-items-start"
 >
-  <div class="w-100 mb-2">
-    <a href="/auth/<%=review.postedBy.username%>">
+  <div class="mb-2">
+    <div style="width: 4rem;" class="d-inline-block">
       <%- include('./avatar', {user: review.postedBy}) %>
-    </a>
-    <a href="/auth/<%=review.postedBy.username%>"
-      ><h5 class="mt-2 text-capitalize d-inline-block">
-        <%= review.postedBy.name %>
+    </div>
+    <a href="/auth/<%=review.postedBy.username%>" class="d-inline-block"
+      ><h5 class="mt-2">
+        <%= review.postedBy.username %>
       </h5></a
     >
     <% if (review.postedBy.id == user.id) { %>
     <button
       type="button"
-      class="btn btn-outline-danger btn-sm float-right"
+      class="btn btn-outline-danger float-right my-3"
       data-toggle="modal"
       data-target="#modalCenter<%=review._id%>"
     >
@@ -21,7 +21,7 @@
     </button>
     <% } %>
   </div>
-  <p class="mb-1"><%- review.text%></p>
+  <h5 class="mb-1"><%= review.stars %> Stars | <%- review.text%></h5>
 </div>
 <div
   class="modal fade"
@@ -46,7 +46,11 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-dismiss="modal"
+        >
           Not now
         </button>
         <form
@@ -55,7 +59,7 @@
           method="post"
         >
           <input type="hidden" name="id" value="<%=review._id%>" />
-          <button type="submit" class="btn btn-outline-danger btn-sm">
+          <button type="submit" class="btn btn-outline-danger">
             Yes
           </button>
         </form>

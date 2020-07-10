@@ -1,8 +1,7 @@
 <%- include('../includes/navbar') %>
 <div class="text-center"><%- include('../includes/messages') %></div>
 <div class="row justify-content-center mr-0 ml-2">
-  <% for( let i = 0; i < products.docs.length; i++ ) { const product =
-  products.docs[i] %>
+  <% products.docs.forEach(product => { %>
   <div
     class="card text-white bg-dark m-3 p-0 shadow-lg col-sm-10 col-md-5 col-lg-4"
   >
@@ -24,9 +23,14 @@
           alt="<%= product.thumbnail.filename %>"
       /></a>
     </div>
-    <div class="card-body">
-      <%- include('./avatar', {user: product.seller}) %>
-      <a href="/auth/<%=product.seller.username%>" class="card-link">
+    <div class="card-body py-2">
+      <div style="width: 50px;" class="d-inline-block">
+        <%- include('../includes/avatar', {user: product.seller}) %>
+      </div>
+      <a
+        href="/auth/<%=product.seller.username%>"
+        class="card-link d-inline-block"
+      >
         <span class="text-white"><%= product.seller.username %></span></a
       >
     </div>
@@ -34,7 +38,7 @@
       <%- include('../includes/add-to-cart', {user, product}) %>
     </div>
   </div>
-  <% } %>
+  <% }) %>
 </div>
 <div class="row justify-content-center mr-0">
   <ul class="pagination">
