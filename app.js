@@ -11,16 +11,12 @@ const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
-const csrf = require('csurf');
 require('dotenv').config();
 
 // Calling routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
-
-// Adding CSRF Protection
-const csrfProtection = csrf();
 
 // Passport Config
 require('./lib/passport')(passport);
@@ -53,10 +49,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/auth', usersRouter);
-app.use('/admin', adminRouter);
-
 // Express session
 app.use(
   session({
@@ -78,18 +70,18 @@ app.use(passport.session());
 // Connect flash
 app.use(flash());
 
-// Using CSRF protection
-app.use(csrfProtection);
-
 // Global variables
 app.use((req, res, next) => {
   res.locals.user = req.user || null;
-  res.locals.csrfToken = req.csrfToken();
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
   next();
 });
+
+app.use('/', indexRouter);
+app.use('/auth', usersRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
