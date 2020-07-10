@@ -24,7 +24,7 @@
       </li>
       <li class="nav-item-float-right">
         <a
-          href="/cart"
+          href="/cart/<%=user.username%>"
           class="nav-link<%= PAGE_PATH === 'cart' ? ' active' : '' %>"
           >Cart</a
         >
@@ -48,18 +48,14 @@
         <a
           href="/status"
           target="_blank"
-          class="nav-link<%= PAGE_PATH === 'admin' ? ' active' : '' %>"
+          class="nav-link"
           rel="noopener noreferrer"
           >Status Panel</a
         >
       </li>
       <% } %>
       <li class="nav-item-float-right">
-        <a
-          href="/auth/signout"
-          class="nav-link<%= PAGE_PATH === 'auth' ? ' active' : '' %>"
-          >Logout</a
-        >
+        <a href="/auth/signout" class="nav-link">Logout</a>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0" method="post" action="/search">
@@ -69,7 +65,7 @@
         name="code"
         placeholder="Search"
       />
-      <button class="btn btn-secondary my-2 my-sm-0" type="submit">
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">
         Search
       </button>
     </form>

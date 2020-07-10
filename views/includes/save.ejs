@@ -1,6 +1,6 @@
 <div class="d-inline-block mr-3 mb-2">
   <% if (user.saved.includes(product.id)) { %>
-  <form method="post" action="/<%=product.slug%>/save?_method=PUT">
+  <form method="POST" action="/<%=product.slug%>/save?_method=PUT">
     <a onclick="this.parentNode.submit();" data-toggle="tooltip" title="Remove"
       ><div>
         <svg
@@ -19,7 +19,7 @@
     ></a>
   </form>
   <% } else { %>
-  <form method="post" action="/<%=product.slug%>/remove?_method=PUT">
+  <form method="POST" action="/<%=product.slug%>/remove?_method=PUT">
     <a onclick="this.parentNode.submit();" data-toggle="tooltip" title="Save"
       ><div>
         <svg
