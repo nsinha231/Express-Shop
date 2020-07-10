@@ -1,0 +1,124 @@
+<title>
+  <%= typeof product!= 'undefined' ? (typeof product.title != 'undefined' ?
+  `Edit - ${product.title}` : '') : 'Create Product' %>
+</title>
+<script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
+<%- include('../includes/navbar') %>
+<div class="text-center">
+  <%- include('../includes/messages') %>
+</div>
+<div class="container card bg-light shadow my-4">
+  <form
+    action="/admin/<%= title == 'update'? `${product.slug}?_method=PUT`: 'create' %>"
+    method="POST"
+    enctype="multipart/form-data"
+    class="row justify-content-center"
+  >
+    <div class="col p-4">
+      <h1 class="text-center p-2"><%=title%> Product</h1>
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" name="title" class="form-control" id="title"
+        placeholder="Enter Title here" value="<%= typeof product!= 'undefined' ?
+        (typeof product.title != 'undefined' ? product.title : '') : '' %>" <%=
+        typeof product!= 'undefined' ? '' : 'required' %> />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" name="description" class="form-control"
+        id="description" placeholder="Enter description here" value="<%= typeof
+        product!= 'undefined' ? (typeof product.description != 'undefined' ?
+        product.description : '') : ''%>" <%= typeof product!= 'undefined' ? ''
+        : 'required' %> />
+      </div>
+      <div class="form-group">
+        <label for="body">Body</label>
+        <textarea
+          name="body"
+          id="body"
+          class="form-control"
+          cols="30"
+          rows="10"
+        >
+<%- typeof product!= 'undefined' ? (typeof product.body != 'undefined' ? product.body : '') : '' %></textarea
+        >
+      </div>
+      <div class="row">
+        <div class="form-group col">
+          <label for="productCode">Product Code</label><input type="text"
+          name="productCode" class="form-control" id="productCode"
+          placeholder="Enter Product Code here" value="<%= typeof product!=
+          'undefined' ? (typeof product.productCode != 'undefined' ?
+          product.productCode : '') : ''%>" <%= typeof product!= 'undefined' ?
+          '' : 'required' %> />
+        </div>
+        <div class="form-group col">
+          <label for="price">Price</label>
+          <input type="text" name="price" class="form-control" id="price"
+          placeholder="Enter price in ₹" value="<%= typeof product!= 'undefined'
+          ? ( typeof product.price != 'undefined' ? product.price : ''): '' %>"
+          <%= typeof product!= 'undefined' ? '' : 'required' %> />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="photos">Photos</label>
+        <div class="input-group mb-3">
+          <div class="custom-file">
+            <input type="file" multiple accept="image/*" name="photos"
+            class="custom-file-input" id="photos" <%= typeof product!=
+            'undefined' ? '' : 'required' %> />
+            <label class="custom-file-label" for="photos">Choose Photos</label>
+          </div>
+        </div>
+        <div class="row justify-content-center" id="preview">
+          <% if (typeof product != 'undefined') { %> <% for( let i = 0; i <
+          product.photos.length; i++ ) {%>
+          <div class="col-sm-5 col-md-4 col-lg-3 mb-3">
+            <%- include('../includes/lightbox',{file:product.photos[i]}) %>
+          </div>
+          <% } %> <% } %>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="thumbnail">Thumbnail</label>
+        <div class="input-group mb-3">
+          <div class="custom-file">
+            <input id="thumbnail" type="file" accept="image/*" name="thumbnail"
+            class="custom-file-input" <%= typeof product!= 'undefined' ? '' :
+            'required' %> />
+            <label class="custom-file-label" for="thumbnail"
+              >Choose Thumbnail</label
+            >
+          </div>
+        </div>
+        <div class="row justify-content-center" id="thumbnailPreview">
+          <% if (typeof product !='undefined') { %>
+          <div class="col-sm-5 col-md-4 col-lg-3 mb-3">
+            <%- include('../includes/lightbox',{file:product.thumbnail}) %>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-outline-success mr-2">
+          Submit
+        </button>
+        <button
+          type="reset"
+          class="btn btn-outline-danger"
+          onclick="history.back()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<%-include('../includes/footer.ejs') %>
+<script>
+  CKEDITOR.replace('body');
+</script>

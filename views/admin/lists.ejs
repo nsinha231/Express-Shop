@@ -1,0 +1,8 @@
+<%- include('../includes/navbar') %>
+<div class="container-fluid justify-content-center align-content-center">
+  <% if( typeof users !== 'undefined') { %> <%-
+  include('../includes/list-users') %> <% } else if( typeof products!==
+  'undefined'){ %> <%- include('../includes/list-products') %> <% } else { %>
+  <%- include('../includes/list-files') %> <% } %>
+</div>
+<%- include('../includes/footer.ejs') %>

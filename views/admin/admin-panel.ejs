@@ -1,0 +1,16 @@
+<%- include('../includes/navbar') %>
+<div class="row justify-content-center mr-0 ml-2">
+  <% for (const key in results) { if (results.hasOwnProperty(key)) { %>
+  <a
+    href="/admin/<%= key != 'create'? `all/${key}` : key %>"
+    class="card col-sm-8 col-md-5 col-lg-4 text-white bg-dark m-3 shadow-lg"
+    style="min-height: 10rem; min-width: 10rem; text-decoration: none;"
+  >
+    <div class="card-body text-center">
+      <%- include('../includes/svgs',{key}) %>
+      <h5 class="card-title"><%=key%></h5>
+      <h4 class="card-title"><%=results[key]%></h4>
+    </div> </a
+  ><% } }%>
+</div>
+<%-include('../includes/footer.ejs') %>

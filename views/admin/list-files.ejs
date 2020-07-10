@@ -1,4 +1,3 @@
-<title>(<%=files.length%>) List of Files</title>
 <div class="table-responsive py-5 mb-5">
   <table class="table table-hover">
     <thead class="thead-dark">
@@ -15,17 +14,7 @@
       <tr>
         <th scope="row"><%=i%></th>
         <td style="width: 20em;">
-          <a
-            data-toggle="lightbox"
-            data-gallery="gallery"
-            href="/files/<%= file.filname %>"
-          >
-            <img
-              src="/files/<%= file.filname %>"
-              class="w-50"
-              alt="<%= file.fileID %>"
-            />
-          </a>
+          <%- include('../includes/lightbox',{file}) %>
         </td>
         <td><%= file.contentType %></td>
         <td><%= file.size %></td>

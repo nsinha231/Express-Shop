@@ -18,17 +18,7 @@
       <tr>
         <th scope="row"><%=i%></th>
         <td style="width: 20rem; height: 2rem;">
-          <a
-            data-toggle="lightbox"
-            data-gallery="gallery"
-            href="/files/<%= product.thumbnail.filename %>"
-          >
-            <img
-              src="/files/<%= product.thumbnail.filename %>"
-              class="w-50"
-              alt="<%= product.thumbnail.fileID %>"
-            />
-          </a>
+          <%- include('../includes/lightbox',{file:product.thumbnail}) %>
         </td>
         <td><a href="/<%= product.slug%>"><%= product.title %></a></td>
         <td><%= product.description %></td>
