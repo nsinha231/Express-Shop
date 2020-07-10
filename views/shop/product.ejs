@@ -22,17 +22,12 @@
           <%- include('../includes/save') %> <%- include('../includes/like') %>
         </div>
         <a href="/auth/<%=product.seller.username%>" class="w-100 mb-2">
-          <img
-            src="/files/<%= product.seller.avatar.filename%>"
-            class="d-inline-block mr-2 rounded-circle"
-            style="width: 40px;"
-            alt="<%= product.seller.avatar.fileID %>"
-          />
+          <%- include('./avatar', {user: product.seller}) %>
           <h5 class="mt-2 text-capitalize d-inline-block">
             <%= product.seller.name %>
           </h5>
         </a>
-        <%- include('../includes/add-to-cart.ejs', { key:'user', product}) %>
+        <%- include('../includes/add-to-cart', { user, product}) %>
         <br />
         <hr class="mt-0" />
         <div class="p-2">
@@ -56,4 +51,4 @@
     </div>
   </div>
 </div>
-<%-include('../includes/footer.ejs') %>
+<%-include('../includes/footer') %>

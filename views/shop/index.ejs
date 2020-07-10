@@ -25,18 +25,13 @@
       /></a>
     </div>
     <div class="card-body">
-      <img
-        src="<%= product.seller.avatar.source %>"
-        class="d-inline-block mr-2 rounded-circle"
-        style="width: 40px;"
-        alt="<%= product.seller.avatar.filename %>"
-      />
+      <%- include('./avatar', {user: product.seller}) %>
       <a href="/auth/<%=product.seller.username%>" class="card-link">
         <span class="text-white"><%= product.seller.username %></span></a
       >
     </div>
     <div class="card-footer">
-      <%- include('../includes/add-to-cart', {key: 'user', product}) %>
+      <%- include('../includes/add-to-cart', {user, product}) %>
     </div>
   </div>
   <% } %>
@@ -66,4 +61,4 @@
     </li>
   </ul>
 </div>
-<%-include('../includes/footer.ejs') %>
+<%-include('../includes/footer') %>
