@@ -1,0 +1,191 @@
+<%- include('../includes/navbar') %>
+<div class="text-center">
+  <%- include('../includes/messages') %>
+</div>
+<div class="container card bg-light shadow my-4">
+  <form
+    id="profileForm"
+    action="/auth/<%=profile.username%>?_method=PUT"
+    method="POST"
+    enctype="multipart/form-data"
+    class="row justify-content-center"
+  >
+    <div
+      class="col-sm-5 col-md-4 col-lg-3 justify-content-center"
+      style="max-width: 20rem;"
+    >
+      <% if (profile.avatar != null) { %>
+      <img
+        src="/files/<%=profile.avatar.filename%>"
+        alt="<%=profile.avatar.fileID%>"
+        class="card-body img-fluid col rounded-circle"
+      />
+      <% } else {%>
+      <img
+        src="/images/profile-image.jpg"
+        alt="profile-image"
+        class="card-body img-fluid col rounded-circle"
+      />
+      <% }%>
+      <div class="form-group" id="avatar">
+        <label for="avatar">Change Profile</label>
+        <input type="file" class="form-control-file" name="avatar" />
+      </div>
+    </div>
+    <div class="col-sm-10 col-md-8 col-lg-9">
+      <h4 class="card-title pt-4"><%= profile.username%></h4>
+      <p class="text-muted mb-0">
+        <%= profile.verified ? 'Seller' : '' %>
+      </p>
+      <div>
+        <p class="text-muted mb-0">Email</p>
+        <h4 class="card-title text-lowercase"><%= profile.email%></h4>
+      </div>
+      <fieldset>
+        <div class="form-group">
+          <label for="forflat">Address line 1</label>
+          <input
+            type="name"
+            name="flat"
+            class="form-control"
+            id="forflat"
+            placeholder="Enter Address line 1, Flat/Building"
+            value="<%= typeof profile.address.flat != 'undefined' ? profile.address.flat : '' %>"
+          />
+        </div>
+        <div class="form-group">
+          <label for="forstreet">Address line 2</label>
+          <input
+            type="name"
+            name="street"
+            class="form-control"
+            id="forstreet"
+            placeholder="Enter Address line 2, Street"
+            value="<%= typeof profile.address.street != 'undefined' ? profile.address.street : '' %>"
+          />
+        </div>
+        <div class="row">
+          <div class="form-group col">
+            <label for="forpincode">Pin code</label>
+            <input
+              type="name"
+              name="pincode"
+              class="form-control"
+              id="forpincode"
+              placeholder="Update Pin Code"
+              value="<%= typeof profile.address.pincode != 'undefined' ? profile.address.pincode : '' %>"
+            />
+          </div>
+          <div class="form-group col">
+            <label for="forstate">State</label>
+            <input
+              type="name"
+              name="state"
+              class="form-control"
+              id="forstate"
+              placeholder="Update State"
+              value="<%= typeof profile.address.state != 'undefined' ? profile.address.state : '' %>"
+            />
+          </div>
+        </div>
+      </fieldset>
+      <% if (profile.id === user.id) { %>
+      <input
+        type="button"
+        class="mb-3 mr-2 btn btn-outline-warning btn-sm hidden"
+        id="editProfile"
+        value="Edit Profile"
+      />
+      <input
+        type="submit"
+        class="mb-3 mr-2 btn btn-outline-success btn-sm"
+        id="submitProfile"
+        value="Save Profile"
+      />
+      <input
+        type="button"
+        class="mb-3 mr-2 btn btn-outline-danger btn-sm"
+        id="deletebutton"
+        data-toggle="modal"
+        data-target="#modalCenter"
+        value="Delete Profile"
+      />
+      <% } %>
+    </div>
+  </form>
+</div>
+
+<div
+  class="modal fade"
+  id="modalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="modalTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">
+          Do you really want to Delete your account
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Not now
+        </button>
+        <form
+          class="float-right"
+          action="/auth/<%=user.username%>?_method=DELETE"
+          method="POST"
+        >
+          <button type="submit" class="btn btn-outline-danger btn-sm">
+            Yes
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container card bg-light shadow my-4">
+  <div class="list-group mb-3">
+    <div class="text-center">
+      <% if (profile.liked.length<=0) { %>
+      <h3 class="mt-3">No Liked Products</h3>
+      <% } else { %>
+      <h3 class="mt-3">Liked Products</h3>
+      <% } %>
+    </div>
+    <% for( let i = 0; i < profile.liked.length; i++ ) { %>
+    <div>
+      <%- include('../includes/list-of-product',{product : profile.liked[i]})%>
+    </div>
+    <%}%>
+  </div>
+</div>
+<% if (profile.id === user.id) { %>
+<div class="container card bg-light shadow my-4">
+  <div class="list-group mb-3">
+    <div class="text-center">
+      <% if (profile.saved.length<=0) { %>
+      <h3 class="mt-3">No Saved Products</h3>
+      <% } else { %>
+      <h3 class="mt-3">Saved Products</h3>
+      <% } %>
+    </div>
+    <% for( let i = 0; i < profile.saved.length; i++ ) { %>
+    <div>
+      <%- include('../includes/list-of-product',{product : profile.saved[i]})%>
+    </div>
+    <%}%>
+  </div>
+</div>
+<% } %> <%-include('../includes/footer.ejs') %>
