@@ -1,5 +1,6 @@
 // Loading models
 const User = require('../models/user');
+const Product = require('../models/product');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -16,6 +17,8 @@ exports.validateSignup = async (req, res, next) => {
     .trim()
     .isLength({ min: 6, max: 16 })
     .withMessage('Username has to be longer than 6.')
+    .isAlphanumeric()
+    .withMessage('Username has non-alphanumeric characters.')
     .custom(async (value) => {
       const user = await User.findOne({ username: value });
       if (user) {
@@ -69,8 +72,8 @@ exports.validateSignup = async (req, res, next) => {
 };
 
 exports.signup = async (req, res) => {
-  const { name, email, password, username } = req.body;
-  const user = await new User({ name, email, username, password });
+  const { email, password, username } = req.body;
+  const user = await new User({ email, username, password });
   await sendEmail(req, user, 'signup');
   let salt = await bcrypt.genSalt(10);
   let hash = await bcrypt.hash(user.password, salt);
@@ -181,6 +184,8 @@ exports.toggleSavedProducts = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
+  const { flat, street, pincode, state } = req.body;
+  req.body.address = { flat, street, pincode, state };
   await User.findOneAndUpdate({ _id: req.user._id }, { $set: req.body });
   req.flash('success_msg', 'Your Account is updated');
   res.redirect(`/auth/${req.user.username}`);
@@ -218,17 +223,17 @@ exports.postReset = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     req.flash('error', 'No account with that email found.');
-    return res.redirect('/reset');
+    return res.redirect('/auth/reset');
   }
   user.resetToken = token;
   user.resetTokenExpiration = Date.now() + 3600000;
   await user.save();
-  await sendEmail(req, user, 'reset');
+  await sendEmail(req, user, `${token}`);
   req.flash(
     'success_msg',
     `Link is sent to ${req.body.email} to reset password`
   );
-  res.redirect('auth/signin');
+  res.redirect('/auth/signin');
 };
 
 exports.getNewPassword = async (req, res, next) => {

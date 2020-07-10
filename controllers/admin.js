@@ -31,9 +31,6 @@ exports.createProduct = (req, res) => {
 exports.sendProduct = async (req, res) => {
   req.body.seller = req.user.id;
   const product = await new Product(req.body).save();
-  const user = await User.findById(req.user.id);
-  user.products.push(product._id);
-  await user.save();
   await Product.populate(product, {
     path: 'seller photos thumbnail',
     select: '_id username avatar contentType filename fileID',
@@ -84,16 +81,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   const { _id } = req.product;
-  await async.parallel([
-    (callback) => {
-      User.findOneAndUpdate(req.user.id, { $pull: { products: _id } }).exec(
-        callback
-      );
-    },
-    (callback) => {
-      Product.findOneAndDelete({ _id }).exec(callback);
-    },
-  ]);
+  await Product.findOneAndDelete({ _id });
   req.flash('success_msg', `Deleted ${req.product.tilte}`);
   res.redirect('/admin/panel');
 };

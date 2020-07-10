@@ -1,5 +1,6 @@
 // Load model
 const Product = require('../models/product');
+const User = require('../models/user');
 const Order = require('../models/order');
 const Review = require('../models/review');
 const PDFDocument = require('pdfkit');
@@ -50,11 +51,11 @@ exports.getProducts = async (req, res) => {
     page: req.query.page || 1,
     limit: req.query.limit || 4,
   };
-  const posts = await Product.paginate({}, options);
+  const products = await Product.paginate({}, options);
   res.render('shop/index', {
-    PAGE_PATH: 'index',
     PAGE_TITLE: 'All Products',
-    posts,
+    PAGE_PATH: 'index',
+    products,
   });
 };
 
@@ -64,10 +65,13 @@ exports.toggleLike = async (req, res) => {
   const likeIds = product.likes.map((id) => id.toString());
   const authUserId = req.user._id.toString();
   if (likeIds.includes(authUserId)) {
-    req.flash('success_msg', `${req.product.title} removed from liked posts`);
+    req.flash(
+      'success_msg',
+      `${req.product.title} removed from liked products`
+    );
     await product.likes.pull(authUserId);
   } else {
-    req.flash('success_msg', `${req.product.title} added to liked posts`);
+    req.flash('success_msg', `${req.product.title} added to liked products`);
     await product.likes.push(authUserId);
   }
   await product.save();
@@ -85,6 +89,7 @@ exports.toggleReview = async (req, res) => {
     operator = '$push';
     review = await new Review({
       text: req.body.review,
+      stars: req.body.stars,
       postedBy: req.user._id,
     });
     await review.save();
@@ -99,7 +104,10 @@ exports.toggleReview = async (req, res) => {
 };
 
 exports.getCart = async (req, res) => {
-  const user = await req.user.populate('cart.items.productId');
+  const user = await User.findById(req.user._id).populate({
+    path: 'cart.items.productId',
+    select: '-photos -body -reviews -likes',
+  });
   const products = user.cart.items;
   res.render('shop/cart', {
     PAGE_PATH: 'cart',
