@@ -58,8 +58,10 @@ router
   .route('/:slug')
   .get(userController.checkAuth, indexController.sendProduct);
 
+router.param('username', userController.getUserByUsername);
+
 router
-  .route('/cart')
+  .route('/cart/:username')
   .get(userController.checkAuth, catchErrors(indexController.getCart))
   .post(userController.checkAuth, catchErrors(indexController.postCart));
 
