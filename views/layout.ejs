@@ -11,8 +11,8 @@
     <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/darkly/bootstrap.min.css"
-      integrity="sha384-Bo21yfmmZuXwcN/9vKrA5jPUMhr7znVBBeLxT9MA4r2BchhusfJ6+n8TLGUcRAtL"
+      href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.0/united/bootstrap.min.css"
+      integrity="sha384-Uga2yStKRHUWCS7ORqIZhJ9LIAv4i7gZuEdoR1QAmw6H+ffhcf7yCOd0CvSoNwoz"
       crossorigin="anonymous"
     />
     <link
@@ -21,7 +21,9 @@
     />
     <link rel="stylesheet" href="/stylesheets/style.css" />
     <!-- Title of page -->
-    <title><%= PAGE_TITLE %></title>
+    <title>
+      <%= typeof PAGE_TITLE != 'undefined' ? PAGE_TITLE : 'Express Shop' %>
+    </title>
   </head>
   <body>
     <%- body %>
