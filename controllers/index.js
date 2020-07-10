@@ -105,6 +105,7 @@ exports.getCart = async (req, res) => {
     PAGE_PATH: 'cart',
     PAGE_TITLE: 'Your Cart',
     products: products,
+    profile: req.profile,
   });
 };
 
@@ -112,13 +113,13 @@ exports.postCart = async (req, res) => {
   const prodId = req.body.productId;
   const product = await Product.findById(prodId);
   req.user.addToCart(product);
-  res.redirect('shop/cart');
+  res.redirect(`/cart/${req.user.username}`);
 };
 
 exports.postCartDeleteProduct = async (req, res) => {
   const prodId = req.body.productId;
   await req.user.removeFromCart(prodId);
-  res.redirect('shop/cart');
+  res.redirect(`/cart/${req.user.username}`);
 };
 
 exports.getCheckout = async (req, res) => {

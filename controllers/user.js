@@ -126,7 +126,7 @@ exports.signin = (req, res, next) => {
 exports.signout = (req, res) => {
   req.session.destroy(() => {
     req.logout();
-    res.clearCookie('connect.sid');
+    res.clearCookie();
     res.redirect('/');
   });
 };
