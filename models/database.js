@@ -19,13 +19,3 @@ mongoose
 
 // Promise of mongoose
 mongoose.Promise = global.Promise;
-
-const connection = mongoose.connection;
-
-connection.once('open', () => {
-  const GFS = new mongoose.mongo.GridFSBucket(connection.db, {
-    bucketName: process.env.bucketName,
-  });
-});
-
-module.exports = { bucket: GFS };

@@ -1,9 +1,19 @@
-const { bucket } = require('../models/database');
 const File = require('../models/file');
+const mongoose = require('mongoose');
 const Multer = require('multer');
 const GridFsStorage = require('multer-gridfs-storage');
 const async = require('async');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const path = require('path');
+
+let GFS;
+
+mongoose.connection.once('open', () => {
+  GFS = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+    bucketName: process.env.bucketName,
+  });
+});
 
 /* Error handler for async / await functions */
 const catchErrors = (fn) => {
@@ -62,7 +72,7 @@ const savingFile = async (file) => {
     let files = new File({
       contentType: file.contentType,
       filename: file.filename,
-      fileID: file.fileID,
+      fileID: file.id,
       size: formatBytes(file.size),
     });
     let { id } = await files.save();
@@ -110,7 +120,7 @@ const saveFile = async (req, res, next) => {
 
 const deleteFileFromBucket = async (file) => {
   try {
-    return await bucket.delete(new mongoose.Types.ObjectId(file.id));
+    return await GFS.delete(new mongoose.Types.ObjectId(file.fileID));
   } catch (error) {
     return Promise.reject(error);
   }
@@ -130,9 +140,7 @@ const checkAndChangeProfile = async (req, res, next) => {
 const deleteFileReference = async (file) => {
   await async.parallel([
     (callback) => {
-      File.findOneAndDelete({
-        fileID: file.fileID,
-      }).exec(callback);
+      File.findByIdAndDelete(file._id).exec(callback);
     },
     async () => {
       await deleteFileFromBucket(file);
@@ -161,16 +169,14 @@ const deleteAllFiles = async (req, res, next) => {
 
 const sendFiles = async (req, res, next) => {
   try {
-    const files = await bucket
-      .find({ filename: req.params.filename })
-      .toArray();
+    const files = await GFS.find({ filename: req.params.filename }).toArray();
     if (!files[0] || files.length === 0) {
       return res
         .status(200)
         .json({ success: false, message: 'No files available' });
     }
     if (files[0].contentType.startsWith('image')) {
-      bucket.openDownloadStreamByName(req.params.filename).pipe(res);
+      GFS.openDownloadStreamByName(req.params.filename).pipe(res);
     } else {
       res.status(404).json({ err: 'Not a image' });
     }
@@ -200,13 +206,13 @@ const sendEmail = async (req, user, key) => {
           <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">link</a> to Verify.</p>`,
     };
   } else {
-    link = `${req.protocol}://${req.get('host')}/auth/reset/${token}`;
+    link = `${req.protocol}://${req.get('host')}/auth/reset/${key}`;
     message = {
       from: `${process.env.emailAddress} Express Shop`,
       to: req.body.email,
       subject: 'Password reset',
       html: `
-          <p>You requested a password reset</p>
+          <h1>You requested a password reset</h1>
           <p>Click this <a href="${link}" target="_blank" rel="noopener noreferrer">link</a> to set a new password.</p>`,
     };
   }

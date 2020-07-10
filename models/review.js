@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema({
   text: { type: String, required: true },
   stars: { type: Number },
-  createdAt: { type: Date, default: Date.now },
   postedBy: { type: Schema.ObjectId, ref: 'User', required: 'User' },
 });
 
