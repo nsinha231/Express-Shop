@@ -26,12 +26,12 @@ const productSchema = new Schema(
   }
 );
 
-// Virtual for this metaTitle.
+// Virtual for this meta_title.
 productSchema.virtual('meta_title').get(function () {
   return this.title.length > 50 ? this.title.substr(0, 50) + '...' : this.title;
 });
 
-// Virtual for this metaDescription.
+// Virtual for this meta_description.
 productSchema.virtual('meta_description').get(function () {
   return this.description.length > 70
     ? this.description.substr(0, 70) + '...'

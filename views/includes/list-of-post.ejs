@@ -1,0 +1,29 @@
+<a href="/<%= product.slug%>"
+  ><div class="list-group-item list-group-item-action flex-column">
+    <div class="w-100 mb-2">
+      <img
+        src="/files/<%= product.thumbnail.filename %>"
+        class="d-inline-block mr-2"
+        style="width: 200px;"
+        alt="<%= product.thumbnail.filename %>"
+      />
+      <div class="mt-2 text-capitalize d-inline-block">
+        <h5><%= product.title %></h5>
+        <p><%= product.meta_description %></p>
+        <h4><%= product.price %> ₹</h4>
+      </div>
+    </div>
+    <a href="/auth/<%= product.author.username%>" class="w-100">
+      <img
+        src="/files/<%= product.author.avatar.filename %>"
+        class="d-inline-block mr-2 rounded-circle"
+        style="width: 40px;"
+        alt="<%= product.author.avatar.filename %>"
+      />
+      <p class="mb-0 d-inline-block">By <%= product.author.username %></p>
+    </a>
+    <small class="text-muted"
+      ><%= moment(product.publishedDate).fromNow()%></small
+    >
+  </div></a
+>

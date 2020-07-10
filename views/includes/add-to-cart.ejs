@@ -1,0 +1,12 @@
+<%if (key =='user'){%>
+<form action="/cart" method="post">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+  <input type="hidden" name="productId" value="<%= product._id %>" />
+  <button class="btn btn-block btn-outline-primary" type="submit">
+    Add to Cart
+  </button>
+</form>
+<%}else{%>
+<a class="btn btn-block btn-outline-primary" href="/auth/signin"
+  >Sign in to order</a
+><%}%>

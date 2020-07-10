@@ -1,0 +1,15 @@
+<% if (user.avatar != null) { %>
+<img
+  src="/files/<%= user.avatar.filename %>"
+  class="d-inline-block mr-2 rounded-circle"
+  style="width: 40px;"
+  alt="<%= user.avatar.key %>"
+/>
+<% } else {%>
+<img
+  src="/img/profile-image.jpg"
+  class="d-inline-block mr-2 rounded-circle"
+  style="width: 40px;"
+  alt="profile-image"
+/>
+<% }%>

@@ -1,3 +1,4 @@
+<%- include('../includes/navbar') %>
 <div class="text-center"><%- include('../includes/messages') %></div>
 <div class="row justify-content-center mr-0 ml-2">
   <% for( let i = 0; i < products.docs.length; i++ ) { const product =
@@ -11,10 +12,8 @@
         <span class="text-info"> PRODUCT CODE: <%= product.productCode %></span>
       </p>
       <h6 class="card-subtitle text-muted"><%= product.meta_description %></h6>
-      <h6 class="card-subtitle text-muted mt-2">
-        <% product.tags.forEach(tag => { %>
-        <span class="text-info"><%= tag %></span>
-        <% });%>
+      <h6 class="card-subtitle mt-2">
+        <span class="text-info"><%= product.price %> ₹</span>
       </h6>
     </div>
     <div class="card-body py-0">
@@ -37,17 +36,11 @@
       >
     </div>
     <div class="card-footer">
-      <% if(user){ %> <%- include('../includes/add-to-cart') %> <% } else{ %>
-      <a class="btn btn-block btn-outline-primary" href="/auth/signin"
-        >Sign in to order</a
-      >
-      <% } %>
+      <%- include('../includes/add-to-cart', {key: 'user', product}) %>
     </div>
   </div>
-
   <% } %>
 </div>
-
 <div class="row justify-content-center mr-0">
   <ul class="pagination">
     <li class="page-item <% if(products.page <= 1) { %> disabled <% } %>">
@@ -73,3 +66,4 @@
     </li>
   </ul>
 </div>
+<%-include('../includes/footer.ejs') %>
