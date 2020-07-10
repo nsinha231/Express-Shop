@@ -3,7 +3,7 @@
 >
   <div class="w-100 mb-2">
     <a href="/auth/<%=review.postedBy.username%>">
-      <%- include('./avatar.ejs', {user: review.postedBy}) %>
+      <%- include('./avatar', {user: review.postedBy}) %>
     </a>
     <a href="/auth/<%=review.postedBy.username%>"
       ><h5 class="mt-2 text-capitalize d-inline-block">
@@ -22,7 +22,6 @@
     <% } %>
   </div>
   <p class="mb-1"><%- review.text%></p>
-  <small class="text-muted"><%= moment(review.createdAt).fromNow()%></small>
 </div>
 <div
   class="modal fade"

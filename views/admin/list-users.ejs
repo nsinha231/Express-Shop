@@ -15,7 +15,7 @@
       <tr>
         <th scope="row"><%=i%></th>
         <td>
-          <%- include('../includes/avatar.ejs', {user}) %>
+          <%- include('../includes/avatar', {user}) %>
         </td>
         <td><a href="/auth/<%= user.username%>">@<%= user.username %></a></td>
         <td><a href="mailto:<%= user.email %>"><%= user.email %></a></td>

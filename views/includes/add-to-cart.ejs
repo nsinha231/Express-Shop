@@ -1,5 +1,5 @@
-<%if (key =='user'){%>
-<form action="/cart" method="post">
+<%if (user != null){%>
+<form action="/cart/<%= user.username %> " method="post">
   <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
   <input type="hidden" name="productId" value="<%= product._id %>" />
   <button class="btn btn-block btn-outline-primary" type="submit">
