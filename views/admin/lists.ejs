@@ -1,8 +1,7 @@
 <%- include('../includes/navbar') %>
 <div class="container-fluid justify-content-center align-content-center">
-  <% if( typeof users !== 'undefined') { %> <%-
-  include('../includes/list-users') %> <% } else if( typeof products!==
-  'undefined'){ %> <%- include('../includes/list-products') %> <% } else { %>
-  <%- include('../includes/list-files') %> <% } %>
+  <% if( typeof users !== 'undefined') { %> <%- include('./list-users') %> <% }
+  else if( typeof products!== 'undefined'){ %> <%- include('./list-products') %>
+  <% } else { %> <%- include('./list-files') %> <% } %>
 </div>
 <%- include('../includes/footer') %>

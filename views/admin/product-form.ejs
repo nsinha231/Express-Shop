@@ -1,7 +1,3 @@
-<title>
-  <%= typeof product!= 'undefined' ? (typeof product.title != 'undefined' ?
-  `Edit - ${product.title}` : '') : 'Create Product' %>
-</title>
 <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
 <%- include('../includes/navbar') %>
 <div class="text-center">
@@ -9,13 +5,13 @@
 </div>
 <div class="container card bg-light shadow my-4">
   <form
-    action="/admin/<%= title == 'update'? `${product.slug}?_method=PUT`: 'create' %>"
+    action="/admin/<%= PAGE_TITLE.startsWith('Update') ? `${product.slug}?_method=PUT`: 'create' %>"
     method="POST"
     enctype="multipart/form-data"
     class="row justify-content-center"
   >
     <div class="col p-4">
-      <h1 class="text-center p-2"><%=title%> Product</h1>
+      <h1 class="text-center p-2"><%=PAGE_TITLE%></h1>
       <div class="form-group">
         <label for="title">Title</label>
         <input type="text" name="title" class="form-control" id="title"
@@ -98,9 +94,6 @@
           </div>
           <% } %>
         </div>
-      </div>
-      <div class="form-group">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       </div>
       <div class="form-group">
         <button type="submit" class="btn btn-outline-success mr-2">

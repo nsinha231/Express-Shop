@@ -14,7 +14,7 @@
       <% for( let i = 0; i < users.length; i++ ) { const user = users[i] %>
       <tr>
         <th scope="row"><%=i%></th>
-        <td>
+        <td style="width: 8rem;">
           <%- include('../includes/avatar', {user}) %>
         </td>
         <td><a href="/auth/<%= user.username%>">@<%= user.username %></a></td>
