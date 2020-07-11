@@ -28,7 +28,7 @@ router.get(
   catchErrors(indexController.getCheckout)
 );
 
-router.get(
+router.post(
   '/create-order',
   userController.checkAuth,
   catchErrors(indexController.postOrder)
@@ -43,7 +43,7 @@ router.get(
 router.get(
   '/orders/:orderId',
   userController.checkAuth,
-  catchErrors(indexController.getInvoice)
+  indexController.getInvoice
 );
 
 router.get('/files/:filename', sendFiles);

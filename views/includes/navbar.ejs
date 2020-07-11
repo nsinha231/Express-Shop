@@ -18,21 +18,21 @@
       <li class="nav-item-float-right">
         <a
           href="/auth/<%=user.username%>"
-          class="nav-link<%= PAGE_PATH === 'auth' ? ' active' : '' %>"
+          class="nav-link<%= typeof PAGE_PATH != 'undefined' ? ( PAGE_PATH === 'auth' ? ' active' : '') : ''%>"
           >Profile</a
         >
       </li>
       <li class="nav-item-float-right">
         <a
           href="/cart/<%=user.username%>"
-          class="nav-link<%= PAGE_PATH === 'cart' ? ' active' : '' %>"
+          class="nav-link<%= typeof PAGE_PATH != 'undefined' ? ( PAGE_PATH === 'cart' ? ' active' : '') : ''%>"
           >Cart</a
         >
       </li>
       <li class="nav-item-float-right">
         <a
           href="/orders"
-          class="nav-link<%= PAGE_PATH === 'orders' ? ' active' : '' %>"
+          class="nav-link<%= typeof PAGE_PATH != 'undefined' ? ( PAGE_PATH === 'orders' ? ' active' : '') : ''%>"
           >Orders</a
         >
       </li>
@@ -40,7 +40,7 @@
       <li class="nav-item-float-right">
         <a
           href="/admin/panel"
-          class="nav-link<%= PAGE_PATH === 'admin' ? ' active' : '' %>"
+          class="nav-link<%= typeof PAGE_PATH != 'undefined' ? ( PAGE_PATH === 'admin' ? ' active' : '') : ''%>"
           >Admin Panel</a
         >
       </li>
