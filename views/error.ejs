@@ -1,5 +1,11 @@
-<h1>Some error occurred!</h1>
-<p>We're working on fixing this, sorry for the inconvenience!</p>
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<%- include('./includes/navbar') %>
+<div class="container card bg-light shadow my-4">
+  <div class="row justify-content-center p-5">
+    <h3>Some error occurred!</h3>
+    <h3>We're working on fixing this, sorry for the inconvenience!</h3>
+    <h4><%= message %></h4>
+    <h5><%= error.status %></h5>
+    <pre><%= error.stack %></pre>
+  </div>
+</div>
+<%-include('./includes/footer') %>
