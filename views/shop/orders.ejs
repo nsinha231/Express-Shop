@@ -1,36 +1,36 @@
 <%- include('../includes/navbar') %>
-<div class="text-center">
-  <%- include('../includes/messages') %>
-</div>
 <div class="container card bg-light shadow my-4">
-  <div class="row justify-content-center">
-    <div class="list-group">
-      <% if (orders.length <= 0) { %>
-      <h1 class="py-5" style="min-height: 22rem;">Nothing there!</h1>
-      <br />
-      <% } else { %> <% orders.forEach(order => { %>
-      <div class="list-group-item list-group-item-action flex-column">
-        <div class="w-100 mb-2">
-          <h1>
-            Order - # <%= order._id %> -
-            <a href="/orders/<%= order._id %>">Invoice</a>
-          </h1>
-          <br />
-          <% order.products.forEach(item => { %>
-          <div class="mt-2 text-capitalize d-inline-block">
-            <h5><%= product.title %></h5>
-            <p><%= product.meta_description %></p>
-            <h4><%= product.price %> ₹</h4>
-            <h4>Quantity - (<%= item.quantity %>)</h4>
-          </div>
-          <br />
-          <% }); %>
-        </div>
-        <% }); %>
+  <% if (orders.length <= 0) { %>
+  <h1 class="py-5" style="min-height: 22rem;">Nothing there!</h1>
+  <br />
+  <% } else { %> <% orders.forEach(order => { %>
+  <div class="row justify-content-center bg-light row-cols-1">
+    <div class="p-4">
+      <h3>
+        Order - #<%= order._id %> -
+        <a
+          href="/orders/<%= order._id %>"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Invoice</a
+        >
+      </h3>
+      <% order.products.forEach(items => { %>
+      <div class="m-2">
+        <a href="/<%= items.product.slug%>"
+          ><h4><%= items.product.title %></h4></a
+        >
+        <h4><%= items.product.meta_description %></h4>
+        <h4>
+          <%= items.product.price %> ₹ | Quantity - (<%= items.quantity %>)
+        </h4>
       </div>
-      <hr />
-      <% } %>
     </div>
+    <br />
+    <% }); %>
   </div>
+  <% }); %>
+  <hr />
+  <% } %>
 </div>
 <%-include('../includes/footer') %>

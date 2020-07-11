@@ -5,24 +5,23 @@
 <div class="container card bg-light shadow my-4">
   <div class="row justify-content-center">
     <div class="col">
-      <% products.forEach(product => { %> <%-
-      include('../includes/list-of-product',{product:product.productId})%>
-      <li class="cart__item">
-        <h1><%= product.productId.title %></h1>
-        <h2>Quantity: <%= product.quantity %></h2>
-      </li>
+      <h1 class="pt-3">Order Details</h1>
+      <% products.forEach(product => { %>
+      <div>
+        <%- include('../includes/list-of-product',{product:product.productId})%>
+      </div>
       <% }) %>
       <div class="text-center">
-        <h2>Total: <%= totalSum %></h2>
+        <h2>Total: <%= totalSum %> ₹</h2>
       </div>
-      <div class="text-center">
+      <div class="text-center p-3">
         <form action="/create-order" method="POST">
           <script
             src="https://checkout.stripe.com/checkout.js"
             class="stripe-button"
             id="checkout-button"
             data-key="pk_test_51H2zuBE82bEB5Z6gPgR53UuLssVFuMoHy6Ktju0JXIurdkGZo1uIQE07IDxlSvnZu4Rax3NOOoVq4npjSWLQYOc500Z2smyEtu"
-            data-amount="<%= totalSum %>"
+            data-amount="<%= totalSum * 100 %>"
             data-name="Your Order"
             data-description="All the items you ordered"
             data-locale="auto"

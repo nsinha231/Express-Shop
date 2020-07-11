@@ -6,7 +6,7 @@ const Review = require('../models/review');
 const PDFDocument = require('pdfkit');
 const Stripe = require('stripe');
 
-const stripe = Stripe(process.env.StripeKey);
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 exports.getProductBySlug = async (req, res, next, slug) => {
   try {
@@ -16,7 +16,7 @@ exports.getProductBySlug = async (req, res, next, slug) => {
     }
     req.flash(
       'error_msg',
-      `No Video with slug: ${slug}, may be because slug is incorrect or modified`
+      `No Product with slug: ${slug}, may be because slug is incorrect or modified`
     );
     res.redirect('/');
   } catch (error) {
@@ -26,13 +26,13 @@ exports.getProductBySlug = async (req, res, next, slug) => {
 
 exports.searchProduct = async (req, res) => {
   const code = req.body.code;
-  req.product = await Product.findOne({ code: code });
+  req.product = await Product.findOne({ productCode: code });
   if (req.product !== null) {
     return res.redirect(`/${req.product.slug}`);
   }
   req.flash(
     'error_msg',
-    `No Video with code: ${code}, may be because code is incorrect`
+    `No Product with Product Code: ${code}, may be because product code is incorrect`
   );
   res.redirect('/');
 };
@@ -131,11 +131,14 @@ exports.postCartDeleteProduct = async (req, res) => {
 };
 
 exports.getCheckout = async (req, res) => {
-  const user = await req.user.populate('cart.items.productId');
+  const user = await User.findById(req.user._id).populate({
+    path: 'cart.items.productId',
+    select: '-photos -body -reviews -likes',
+  });
   const products = user.cart.items;
   let total = 0;
-  products.forEach((p) => {
-    total += p.quantity * p.productId.price;
+  products.forEach((product) => {
+    total += product.quantity * product.productId.price;
   });
   res.render('shop/checkout', {
     PAGE_PATH: 'orders',
@@ -150,7 +153,10 @@ exports.postOrder = async (req, res) => {
   // Get the payment token ID submitted by the form:
   const token = req.body.stripeToken; // Using Express
   let totalSum = 0;
-  const user = await req.user.populate('cart.items.productId');
+  const user = await User.findById(req.user._id).populate({
+    path: 'cart.items.productId',
+    select: '-photos -body -reviews -likes',
+  });
   user.cart.items.forEach((p) => {
     totalSum += p.quantity * p.productId.price;
   });
@@ -159,9 +165,9 @@ exports.postOrder = async (req, res) => {
   });
   const order = new Order({
     user: {
-      email: req.user.email,
-      userId: req.user,
-      userAddress: req.user.address,
+      email: user.email,
+      userId: user.id,
+      userAddress: user.address,
     },
     products: products,
   });
@@ -172,9 +178,9 @@ exports.postOrder = async (req, res) => {
     description: 'Demo Order',
     source: token,
     metadata: {
-      order_id: result._id.toString(),
-      address: `${result.userAddress.flat}, ${result.userAddress.street},
-      ${result.userAddress.pincode} ${result.userAddress.state}`,
+      order_id: order._id.toString(),
+      address: `${user.address.flat}, ${user.address.street},
+      ${user.address.pincode} ${user.address.state}`,
     },
   });
   req.user.clearCart();
@@ -191,40 +197,47 @@ exports.getOrders = async (req, res) => {
 };
 
 exports.getInvoice = async (req, res, next) => {
-  const orderId = req.params.orderId;
-  const order = await Order.findById(orderId);
-  if (!order) {
-    return next(new Error('No order found.'));
+  try {
+    const orderId = req.params.orderId;
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return next(new Error('No order found.'));
+    }
+    if (order.user.userId.toString() !== req.user._id.toString()) {
+      return next(new Error('Unauthorized'));
+    }
+    const invoiceName = `invoice-${orderId}.pdf`;
+    const pdfDoc = new PDFDocument();
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${invoiceName}"`
+    );
+    pdfDoc.pipe(res);
+    pdfDoc.fontSize(26).text('Invoice', {
+      underline: true,
+    });
+    pdfDoc.fontSize(26).text('-----------------------');
+    let totalPrice = 0;
+    order.products.forEach((prod) => {
+      totalPrice += prod.quantity * prod.product.price;
+      pdfDoc
+        .fontSize(20)
+        .text(
+          `${prod.product.title} -  ${prod.quantity} x Rupee ${prod.product.price}`
+        );
+    });
+    pdfDoc.fontSize(26).text('-----------------------');
+    pdfDoc.fontSize(20).text(`Total Price: Rupee ${totalPrice}`);
+    pdfDoc.fontSize(20).text(`Address`);
+    pdfDoc.fontSize(26).text('-----------------------');
+    pdfDoc.fontSize(20).text(
+      `${req.user.address.flat}, ${req.user.address.street},
+      ${req.user.address.pincode} ${req.user.address.state},`
+    );
+    pdfDoc.fontSize(26).text('-----------------------');
+    pdfDoc.end();
+  } catch (error) {
+    return next(error);
   }
-  if (order.user.userId.toString() !== req.user._id.toString()) {
-    return next(new Error('Unauthorized'));
-  }
-  const invoiceName = `invoice-${orderId}.pdf`;
-  const pdfDoc = new PDFDocument();
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename="${invoiceName}"`);
-  pdfDoc.pipe(res);
-  pdfDoc.fontSize(26).text('Invoice', {
-    underline: true,
-  });
-  pdfDoc.text('-----------------------');
-  let totalPrice = 0;
-  order.products.forEach((prod) => {
-    totalPrice += prod.quantity * prod.product.price;
-    pdfDoc
-      .fontSize(14)
-      .text(
-        `${prod.product.title} -  ${prod.quantity} x ₹ ${prod.product.price}`
-      );
-  });
-  pdfDoc.text('---');
-  pdfDoc.fontSize(20).text(`Total Price: ₹ ${totalPrice}`);
-  pdfDoc.fontSize(20).text(`Address`);
-  pdfDoc.text('---');
-  pdfDoc.fontSize(20).text(
-    `${userAddress.flat}, ${userAddress.street},
-      ${userAddress.pincode} ${userAddress.state},`
-  );
-  pdfDoc.text('-----------------------');
-  pdfDoc.end();
 };
