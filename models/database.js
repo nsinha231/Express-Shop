@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // MongoDB Config
-const mongoDBURI = process.env.mongoDBURI;
+const MONGODB_URI = process.env.MONGODB_URI;
 const mongoDBOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -11,8 +11,8 @@ const mongoDBOptions = {
 
 // Connect to MongoDB
 mongoose
-  .connect(mongoDBURI, mongoDBOptions)
-  .then(() => console.info(`MongoDB is Connected on ${mongoDBURI}`))
+  .connect(MONGODB_URI, mongoDBOptions)
+  .then(() => console.info(`MongoDB is Connected on ${MONGODB_URI}`))
   .catch((err) =>
     console.error(`Unable to connect MongoDB due to ${err.message}`)
   );

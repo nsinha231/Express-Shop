@@ -11,7 +11,7 @@ let GFS;
 
 mongoose.connection.once('open', () => {
   GFS = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
-    bucketName: process.env.bucketName,
+    bucketName: process.env.BUCKET_NAME,
   });
 });
 
@@ -23,7 +23,7 @@ const catchErrors = (fn) => {
 };
 
 const storage = new GridFsStorage({
-  url: process.env.mongoDBURI,
+  url: process.env.MONGODB_URI,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
@@ -33,7 +33,7 @@ const storage = new GridFsStorage({
         const filename = buf.toString('hex') + path.extname(file.originalname);
         const fileInfo = {
           filename: filename,
-          bucketName: process.env.bucketName,
+          bucketName: process.env.BUCKET_NAME,
         };
         resolve(fileInfo);
       });
@@ -149,7 +149,7 @@ const deleteFileReference = async (file) => {
 };
 
 const deleteAllFiles = async (req, res, next) => {
-  const { photos, thumbnail } = req.post;
+  const { photos, thumbnail } = req.product;
   await async.parallel([
     async () => {
       if (req.body.thumbnail !== undefined || req.url.includes('DELETE')) {
@@ -188,8 +188,8 @@ const sendFiles = async (req, res, next) => {
 const transport = nodemailer.createTransport({
   service: 'hotmail',
   auth: {
-    user: process.env.emailAddress,
-    pass: process.env.emailPassword,
+    user: process.env.EMAIL_ADDRESS,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -198,7 +198,7 @@ const sendEmail = async (req, user, key) => {
   if (key === 'signup') {
     link = `${req.protocol}://${req.get('host')}/auth/verify/${user.id}`;
     message = {
-      from: `${process.env.emailAddress} Express Shop`,
+      from: `${process.env.EMAIL_ADDRESS} Express Shop`,
       to: user.email,
       subject: 'Please verify your Email to login to Express Shop.',
       html: `
@@ -208,7 +208,7 @@ const sendEmail = async (req, user, key) => {
   } else {
     link = `${req.protocol}://${req.get('host')}/auth/reset/${key}`;
     message = {
-      from: `${process.env.emailAddress} Express Shop`,
+      from: `${process.env.EMAIL_ADDRESS} Express Shop`,
       to: req.body.email,
       subject: 'Password reset',
       html: `
