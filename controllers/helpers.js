@@ -22,6 +22,10 @@ const catchErrors = (fn) => {
   };
 };
 
+const escapeRegex = (text) => {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+};
+
 const storage = new GridFsStorage({
   url: process.env.MONGODB_URI,
   file: (req, file) => {
@@ -225,6 +229,7 @@ const sendEmail = async (req, user, key) => {
 
 module.exports = {
   catchErrors,
+  escapeRegex,
   upload,
   saveFile,
   checkAndChangeProfile,

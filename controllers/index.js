@@ -5,6 +5,7 @@ const Order = require('../models/order');
 const Review = require('../models/review');
 const PDFDocument = require('pdfkit');
 const Stripe = require('stripe');
+const { escapeRegex } = require('./helpers');
 
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -25,15 +26,23 @@ exports.getProductBySlug = async (req, res, next, slug) => {
 };
 
 exports.searchProduct = async (req, res) => {
-  const code = req.body.code;
-  req.product = await Product.findOne({ productCode: code });
-  if (req.product !== null) {
-    return res.redirect(`/${req.product.slug}`);
-  }
-  req.flash(
-    'error_msg',
-    `No Product with Product Code: ${code}, may be because product code is incorrect`
+  const options = {
+    page: req.query.page || 1,
+    limit: req.query.limit || 4,
+  };
+  const text = escapeRegex(req.body.text);
+  products = await Product.paginate(
+    { title: { $regex: text, $options: 'i' } },
+    options
   );
+  if (products.docs.length > 0) {
+    return res.render('shop/index', {
+      PAGE_TITLE: `Result for: ${req.body.text}`,
+      PAGE_PATH: 'index',
+      products,
+    });
+  }
+  req.flash('error_msg', `No Product with Text: ${req.body.text}.`);
   res.redirect('/');
 };
 
