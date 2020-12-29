@@ -1,6 +1,7 @@
-# Express-Shop
+# Express-Shop4
 
-This is an simple E-commerce Site
+Duration: Jul 2020 - Jul 2020
+Simple Shopping site with features such as user email verification, password resetting, user cart, generating bill pdf, admin panel to create, update, delete and view products. I completed this project with my friend Kashmira.
 
 ## Getting Started
 
