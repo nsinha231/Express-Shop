@@ -1,7 +1,5 @@
 # Express-Shop4
 
-Duration: Jul 2020 - Jul 2020
-Simple Shopping site with features such as user email verification, password resetting, user cart, generating bill pdf, admin panel to create, update, delete and view products. I completed this project with my friend Kashmira.
 
 ## Getting Started
 
@@ -44,7 +42,7 @@ npm run start
     - 🍴 Fork this repo!
 
 - **Option 2**
-    - 👯 Clone this repo to your local machine using `https://github.com/Saurabhrkp/Express-Shop.git`
+    - 👯 Clone this repo to your local machine using `https://github.com/nsinha231/Express-Shop.git`
 
 ### Step 2
 
@@ -52,7 +50,7 @@ npm run start
 
 ### Step 3
 
-- 🔃 Create a new pull request using <a href="https://github.com/Saurabhrkp/Express-Shop/compare/" target="_blank">`https://github.com/Saurabhrkp/Express-Shop/compare/`</a>.
+- 🔃 Create a new pull request using <a href="https://github.com/nsinha231/Express-Shop/compare/" target="_blank">`https://github.com/nsinha231/Express-Shop/compare/`</a>.
 
 ---
 
